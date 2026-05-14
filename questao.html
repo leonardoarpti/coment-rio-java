@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Questões Interativas — PPRS</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background:
+      radial-gradient(circle at top left, rgba(56,189,248,0.15), transparent 25%),
+      radial-gradient(circle at bottom right, rgba(129,140,248,0.15), transparent 25%),
+      linear-gradient(135deg, #020617, #0f172a 50%, #111827);
+    color: #f8fafc;
+    min-height: 100vh;
+    padding: 40px;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: auto;
+  }
+
+  .hero {
+    text-align: center;
+    margin-bottom: 50px;
+  }
+
+  .hero h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, #38bdf8, #818cf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 15px;
+  }
+
+  .hero p {
+    color: #cbd5e1;
+  }
+
+  .questao {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 28px;
+    padding: 35px;
+    margin-bottom: 35px;
+    backdrop-filter: blur(14px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+    display: none; 
+  }
+
+  .questao.ativa {
+    display: block;
+    animation: deslizarSuave 0.4s ease forwards;
+  }
+
+  @keyframes deslizarSuave {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: rgba(56,189,248,0.15);
+    color: #7dd3fc;
+    margin-bottom: 18px;
+    font-size: 0.9rem;
+  }
+
+  .questao h2 {
+    color: #7dd3fc;
+    margin-bottom: 25px;
+  }
+
+  .enunciado {
+    line-height: 1.9;
+    margin-bottom: 25px;
+    color: #e2e8f0;
+  }
+
+  .alternativas {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .alt {
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    color: #f8fafc;
+    font-size: 1rem;
+    padding: 18px 20px;
+    border-radius: 18px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    transition: 0.3s;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .alt:hover:not(:disabled) {
+    transform: translateX(5px);
+    border-color: #38bdf8;
+  }
+
+  .alt.selecionada {
+    border: 1px solid #38bdf8;
+    background: rgba(56,189,248,0.12);
+  }
+
+  .certa {
+    background: rgba(34,197,94,0.18) !important;
+    border: 1px solid rgba(34,197,94,0.5) !important;
+  }
+
+  .errada {
+    background: rgba(239,68,68,0.18) !important;
+    border: 1px solid rgba(239,68,68,0.5) !important;
+  }
+
+  /* BLOQUEIO DE ESTILO NATIVO: Impede que o macOS deixe as alternativas cinzas e ilegíveis */
+  .alt:disabled {
+    opacity: 1 !important;
+    -webkit-text-fill-color: #f8fafc !important;
+    color: #f8fafc !important;
+    cursor: default;
+  }
+
+  .btn-responder {
+    margin-top: 22px;
+    padding: 14px 24px;
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+    background: linear-gradient(90deg, #0ea5e9, #6366f1);
+    transition: 0.3s;
+  }
+
+  .btn-responder:hover:not(:disabled) {
+    transform: translateY(-2px);
+  }
+
+  .btn-responder:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+
+  .resposta {
+    margin-top: 25px;
+    padding: 22px;
+    border-radius: 18px;
+    background: rgba(56,189,248,0.08);
+    border: 1px solid rgba(56,189,248,0.25);
+    line-height: 1.8;
+    color: #e2e8f0;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .navegacao-questoes {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 40px;
+    background: rgba(255,255,255,0.05);
+    padding: 15px 25px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(10px);
+  }
+
+  .btn-nav {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.1);
+    color: white;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .btn-nav:hover:not(:disabled) {
+    background: rgba(56,189,248,0.3);
+    transform: translateY(-2px);
+  }
+
+  .btn-nav:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .contador {
+    color: #7dd3fc;
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="hero">
+    <h1>Questões Interativas</h1>
+    <p>PPRS • Informática • Internet • Segurança da Informação</p>
+  </div>
+
+  <div class="questao ativa">
+    <div class="tag">Questão 1</div>
+    <h2>Fingerprinting</h2>
+    <div class="enunciado">
+      Assinale a alternativa que corresponde a uma técnica de rastreamento e identificação que consiste na identificação única de um dispositivo ou usuário através da coleta e combinação de características técnicas específicas, sem a necessidade de arquivos armazenados (como cookies) ou contas logadas.
+    </div>
+    <div class="alternativas">
+      <button class="alt" data-correta="false">A) Cookies</button>
+      <button class="alt" data-correta="true">B) Fingerprinting</button>
+      <button class="alt" data-correta="false">C) Rastreamento por URL</button>
+      <button class="alt" data-correta="false">D) ID de usuário (UID)</button>
+      <button class="alt" data-correta="false">E) Pixels de rastreamento</button>
+    </div>
+    <button class="btn-responder" onclick="responder(this)">✅ Responder</button>
+    <div class="resposta hidden">
+      O <strong>Fingerprinting</strong> identifica dispositivos através das características técnicas do navegador, sistema operacional, resolução da tela, plugins e outros dados técnicos.
+    </div>
+  </div>
+
+  <div class="questao">
+    <div class="tag">Questão 2</div>
+    <h2>Surface Web</h2>
+    <div class="enunciado">
+      A camada da internet publicamente acessível cujas páginas são indexadas pelos mecanismos de busca dos principais navegadores é conhecida como:
+    </div>
+    <div class="alternativas">
+      <button class="alt" data-correta="false">A) Dark Web</button>
+      <button class="alt" data-correta="false">B) Extranet</button>
+      <button class="alt" data-correta="false">C) Deep Web</button>
+      <button class="alt" data-correta="false">D) Darknet</button>
+      <button class="alt" data-correta="true">E) Surface Web</button>
+    </div>
+    <button class="btn-responder" onclick="responder(this)">✅ Responder</button>
+    <div class="resposta hidden">
+      A <strong>Surface Web</strong> é a parte pública da internet indexada por mecanismos de busca como Google, Bing e Yahoo.
+    </div>
+  </div>
+
+  <div class="questao">
+    <div class="tag">Questão 3</div>
+    <h2>DNS</h2>
+    <div class="enunciado">
+      O DNS (Domain Name System) é um sistema que traduz nomes de domínio em endereços IP (1ª parte) e que opera na camada de transporte do modelo TCP/IP (2ª parte), sendo o principal responsável por automatizar as configurações de dispositivos em uma rede de computadores (3ª parte).<br><br>
+      Quais partes estão corretas?
+    </div>
+    <div class="alternativas">
+      <button class="alt" data-correta="true">A) Apenas a 1ª parte</button>
+      <button class="alt" data-correta="false">B) Apenas a 3ª parte</button>
+      <button class="alt" data-correta="false">C) Apenas a 1ª e a 2ª partes</button>
+      <button class="alt" data-correta="false">D) Apenas a 2ª e a 3ª partes</button>
+      <button class="alt" data-correta="false">E) Todas as partes</button>
+    </div>
+    <button class="btn-responder" onclick="responder(this)">✅ Responder</button>
+    <div class="resposta hidden">
+      O DNS traduz nomes de domínio em IPs. Opera na camada de aplicação. Quem automatiza IPs em rede é o DHCP.
+    </div>
+  </div>
+
+  <div class="questao">
+    <div class="tag">Questão 4</div>
+    <h2>Spoofing</h2>
+    <div class="enunciado">
+      Em relação à segurança cibernética, qual das alternativas abaixo melhor define o que é spoofing?
+    </div>
+    <div class="alternativas">
+      <button class="alt" data-correta="false">A) Método de tentativa e erro usado para descobrir senhas.</button>
+      <button class="alt" data-correta="false">B) Worm.</button>
+      <button class="alt" data-correta="false">C) Ataque DDoS.</button>
+      <button class="alt" data-correta="true">D) Falsificação de identidade.</button>
+      <button class="alt" data-correta="false">E) Ransomware.</button>
+    </div>
+    <button class="btn-responder" onclick="responder(this)">✅ Responder</button>
+    <div class="resposta hidden">
+      Spoofing é a falsificação de identidade digital para enganar usuários ou sistemas simulando ser uma fonte confiável.
+    </div>
+  </div>
+
+  <div class="navegacao-questoes">
+    <button id="btn-anterior" class="btn-nav" disabled>⬅️ Anterior</button>
+    <div id="contador" class="contador">Questão 1 de 4</div>
+    <button id="btn-proxima" class="btn-nav">Próxima ➡️</button>
+  </div>
+
+</div>
+
+<script>
+  // Lógica blindada de seleção de alternativas
+  document.querySelectorAll('.alternativas').forEach(grupo => {
+    const botoes = grupo.querySelectorAll('.alt');
+    botoes.forEach(botao => {
+      botao.addEventListener('click', () => {
+        if (botao.disabled) return; // Evita cliques fantasmas se já estiver respondido
+        botoes.forEach(btn => btn.classList.remove('selecionada'));
+        botao.classList.add('selecionada');
+      });
+    });
+  });
+
+  // Lógica do botão Responder
+  function responder(botaoResponder) {
+    // Isola a lógica para procurar elementos APENAS dentro da questão atual
+    const questao = botaoResponder.closest('.questao');
+    const selecionada = questao.querySelector('.alt.selecionada');
+
+    if (!selecionada) {
+      alert('Selecione uma alternativa antes de responder.');
+      return;
+    }
+
+    const correta = selecionada.dataset.correta === 'true';
+    const alternativas = questao.querySelectorAll('.alt');
+
+    // Desabilita as opções para impedir novas seleções
+    alternativas.forEach(btn => { btn.disabled = true; });
+
+    // Aplica as cores de resolução
+    if (correta) {
+      selecionada.classList.add('certa');
+    } else {
+      selecionada.classList.add('errada');
+      // Pinta também a alternativa que era a correta para revisão
+      const opcaoCorreta = questao.querySelector('.alt[data-correta="true"]');
+      if(opcaoCorreta) opcaoCorreta.classList.add('certa');
+    }
+
+    questao.querySelector('.resposta').classList.remove('hidden');
+    botaoResponder.disabled = true;
+    botaoResponder.innerHTML = '✔ Respondido';
+  }
+
+  // Lógica do Carrossel
+  const questoes = document.querySelectorAll('.questao');
+  const btnAnterior = document.getElementById('btn-anterior');
+  const btnProxima = document.getElementById('btn-proxima');
+  const textoContador = document.getElementById('contador');
+
+  let indiceAtual = 0;
+
+  function atualizarCarrossel() {
+    questoes.forEach(q => q.classList.remove('ativa'));
+    questoes[indiceAtual].classList.add('ativa');
+    textoContador.innerText = `Questão ${indiceAtual + 1} de ${questoes.length}`;
+    btnAnterior.disabled = (indiceAtual === 0);
+    btnProxima.disabled = (indiceAtual === questoes.length - 1);
+  }
+
+  btnAnterior.addEventListener('click', () => {
+    if (indiceAtual > 0) {
+      indiceAtual--;
+      atualizarCarrossel();
+    }
+  });
+
+  btnProxima.addEventListener('click', () => {
+    if (indiceAtual < questoes.length - 1) {
+      indiceAtual++;
+      atualizarCarrossel();
+    }
+  });
+
+  atualizarCarrossel();
+</script>
+
+</body>
+</html>
