@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PPRS 2026 — Página Inicial</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+
+
+
+
+</head>
+
+<body>
+
+<div id="menu-container"></div>
+<script src="menu.js"></script>
+
+
+
+
+<div class="container">
+
+  <section class="hero">
+    <div class="badge">PPRS 2026 • Polícia Penal</div>
+    <h1>Quadro Demonstrativo de Provas</h1>
+    <p>
+      Página inicial moderna com a estrutura oficial das provas teórico-objetivas da Polícia Penal do Rio Grande do Sul,
+      contendo disciplinas, quantidade de questões, pontuação e critérios mínimos de aprovação.
+    </p>
+  </section>
+
+  <section class="table-wrapper">
+
+    <div class="table-title">
+      ANEXO II — QUADRO DEMONSTRATIVO DE PROVAS
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Cargo</th>
+          <th>Componentes das Provas</th>
+          <th>Nº de Questões</th>
+          <th>Pontos por Questão</th>
+          <th>Mínimo de Acertos</th>
+          <th>Mínimo de Pontos</th>
+          <th>Total de Pontos</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td rowspan="5"><strong>Policial Penal</strong></td>
+          <td class="subjects">Língua Portuguesa</td>
+          <td>20</td>
+          <td>1,25</td>
+          <td class="highlight">10</td>
+          <td rowspan="5" class="highlight">50,00</td>
+          <td rowspan="5" class="highlight">100,00</td>
+        </tr>
+
+        <tr>
+          <td class="subjects">Informática</td>
+          <td>20</td>
+          <td>1,25</td>
+          <td class="highlight">10</td>
+        </tr>
+
+        <tr>
+          <td class="subjects">Raciocínio Lógico</td>
+          <td>10</td>
+          <td>1,25</td>
+          <td class="highlight">04</td>
+        </tr>
+
+        <tr>
+          <td class="subjects">Legislação Aplicada / Direito</td>
+          <td>30</td>
+          <td>1,25</td>
+          <td class="highlight">15</td>
+        </tr>
+
+        <tr>
+          <td class="subjects">Conhecimentos Gerais do Sistema Prisional</td>
+          <td>10</td>
+          <td>1,25</td>
+          <td class="highlight">04</td>
+        </tr>
+      </tbody>
+    </table>
+
+  </section>
+
+
+<section class="chart-section">
+
+  <div class="chart-card">
+
+    <h2>📊 Distribuição das Questões</h2>
+
+    <canvas id="graficoMaterias"></canvas>
+
+  </div>
+
+</section>
+
+<section class="cards">
+
+	<div class="info-card">
+	  <h2>📅 Contagem Regressiva</h2>
+
+	  <p>
+		<strong>FALTAM:</strong><br>
+		<span id="dias-prova" class="highlight" style="font-size: 1.5rem;">
+		  ...
+		</span>
+	  </p>
+	</div>
+
+	<div class="info-card">
+		<h2>📅 Data da Prova</h2>
+
+		<p>
+		<strong>DATA:</strong>
+		<span class="highlight">09/08/2026</span>
+		<br><br>
+
+		<strong>LOCAL:</strong>
+		Porto Alegre
+	  </p>
+	</div>
+
+    <div class="info-card">
+      <h2>📚 Total de Questões</h2>
+      <p>
+        A prova objetiva possui <strong>80 questões</strong>, distribuídas entre cinco componentes curriculares.
+      </p>
+    </div>
+
+    <div class="info-card">
+      <h2>🎯 Pontuação</h2>
+      <p>
+        Cada questão vale <strong>1,25 ponto</strong>, totalizando <strong>100 pontos</strong> na prova.
+      </p>
+    </div>
+
+    <div class="info-card">
+      <h2>✅ Aprovação</h2>
+      <p>
+        É necessário atingir no mínimo <strong>50 pontos</strong> no total e os mínimos por componente.
+      </p>
+    </div>
+
+    <div class="info-card">
+      <h2>🛡️ Cargo</h2>
+      <p>
+        O quadro demonstrativo refere-se ao cargo de <strong>Policial Penal</strong> da PPRS.
+      </p>
+    </div>
+
+  </section>
+
+  <div class="footer">
+    PPRS 2026 • Página Inicial do Plano de Estudos • Polícia Penal do Rio Grande do Sul
+  </div>
+
+</div>
+
+
+
+<script>
+  const dataProva = new Date("2026-08-09T00:00:00");
+  const hoje = new Date();
+
+  const diferenca = dataProva - hoje;
+
+  const dias = Math.ceil(
+    diferenca / (1000 * 60 * 60 * 24)
+  );
+
+  const elemento = document.getElementById("dias-prova");
+
+  if (dias > 0) {
+    elemento.innerHTML = dias + " dias";
+  } else if (dias === 0) {
+    elemento.innerHTML = "É HOJE!";
+  } else {
+    elemento.innerHTML = "Prova encerrada";
+  }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+const ctx = document.getElementById('graficoMaterias');
+
+new Chart(ctx, {
+    type: 'doughnut',
+
+    data: {
+        labels: [
+            'Português',
+            'Informática',
+            'Raciocínio Lógico',
+            'Legislação/Direito',
+            'Sistema Prisional'
+        ],
+
+        datasets: [{
+            label: 'Quantidade de Questões',
+
+            data: [20, 20, 10, 30, 10],
+
+            backgroundColor: [
+                '#38bdf8',
+                '#6366f1',
+                '#22c55e',
+                '#f59e0b',
+                '#ef4444'
+            ],
+
+            borderWidth: 0
+        }]
+    },
+
+    options: {
+
+        responsive: true,
+
+        plugins: {
+
+            legend: {
+                position: 'bottom',
+
+                labels: {
+                    color: '#e2e8f0',
+                    padding: 20,
+                    font: {
+                        size: 14
+                    }
+                }
+            },
+
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+
+                        const total = context.dataset.data.reduce((a,b)=>a+b,0);
+
+                        const value = context.raw;
+
+                        const percentage =
+                          ((value / total) * 100).toFixed(1);
+
+                        return value + ' questões (' + percentage + '%)';
+                    }
+                }
+            }
+        },
+
+        cutout: '60%'
+    }
+});
+
+</script>
+
+</body>
+</html>
